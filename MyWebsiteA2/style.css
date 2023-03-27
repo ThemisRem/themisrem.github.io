@@ -64,6 +64,12 @@ a {
     object-position: top 100px;
 }
 
+.periexomenopgs {
+    text-align: left;
+    color: rgb(0, 19, 124);
+    font-size: x-large;
+}
+
 /* Από εδώ και κάτω είναι για το index */
 
 .xartis {
@@ -91,3 +97,26 @@ table, th, td {
     border-collapse: collapse;
 }
 
+/* Από εδώ και κάρω είναι για το pg1 */
+
+.div1 {
+    width: 100%;
+}
+
+.div2 {
+    width: 50%;
+    height: auto;
+    float: left;
+}
+
+.div3 {
+    margin-left: 50%;
+    height: auto;
+}
+
+.parthen {
+    width: 700px;
+    height: 400px;
+    box-shadow: 10px 10px 5px rgb(192, 192, 192);
+    border-radius: 25px;
+}
