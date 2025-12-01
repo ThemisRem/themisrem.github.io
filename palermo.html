@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Παλέρμο</title>
+
+<style>
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: linear-gradient(135deg, #1e1e2e, #2a2a40);
+        margin: 0;
+        padding: 15px;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        box-sizing: border-box;
+    }
+
+    .card {
+        background: #2e2e42;
+        padding: 20px;
+        border-radius: 18px;
+        width: 100%;
+        max-width: 480px; /* τέλειο για κινητά */
+        box-shadow: 0 0 25px rgba(0,0,0,0.4);
+        animation: fadeIn 0.4s ease-out;
+        box-sizing: border-box;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    h2, h3 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #8ab4ff;
+    }
+
+    input[type="text"], input[type="number"] {
+        width: 100%;
+        padding: 14px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 12px;
+        background: #3c3c56;
+        color: #fff;
+        font-size: 18px;
+        box-sizing: border-box;
+    }
+
+    label {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        padding: 10px 0;
+    }
+
+    input[type="checkbox"] {
+        transform: scale(1.5);
+        margin-right: 14px;
+        cursor: pointer;
+    }
+
+    button {
+        width: 100%;
+        padding: 16px;
+        background: #8ab4ff;
+        border: none;
+        margin-top: 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 20px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #6d9dff;
+    }
+
+    .next-btn {
+        background: #4ade80;
+    }
+
+    .next-btn:hover {
+        background: #22c55e;
+    }
+
+    .role-display {
+        font-size: 28px;
+        font-weight: bold;
+        margin: 20px 0;
+        color: #ffd369;
+        text-align: center;
+    }
+
+    .player-name {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 12px;
+    }
+
+    .hidden { display: none; }
+
+    /* Κάνει τα checkboxes και τα labels να μην κολλάνε */
+    label {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    /* Βελτίωση για πολύ μικρές οθόνες */
+    @media (max-width: 380px) {
+        button { font-size: 18px; padding: 14px; }
+        input[type="text"], input[type="number"] { font-size: 16px; padding: 12px; }
+        .role-display { font-size: 24px; }
+    }
+
+</style>
+
+</head>
+<body>
+
+<div class="card" id="step1">
+    <h2>Παλέρμο</h2>
+    <h3>Βήμα 1: Βάλε τους παίκτες</h3>
+
+    <input type="number" id="playerCount" min="1" placeholder="Αριθμός παικτών">
+
+    <button onclick="createPlayerInputs()">ΟΚ</button>
+
+    <div id="players"></div>
+
+    <button onclick="goToStep2()" id="btnToStep2" class="hidden next-btn">Επόμενο</button>
+</div>
+
+<div class="card hidden" id="step2">
+    <h3>Βήμα 2: Επίλεξε ρόλους</h3>
+
+    <label><input type="checkbox" class="role" value="Φανερός Δολοφόνος"> Φανερός Δολοφόνος</label>
+    <label><input type="checkbox" class="role" value="Κρυφός Δολοφόνος"> Κρυφός Δολοφόνος</label>
+    <label><input type="checkbox" class="role" value="Κρυφός Δολοφόνος 2"> Κρυφός Δολοφόνος 2</label>
+    <label><input type="checkbox" class="role" value="Μπάτσος"> Μπάτσος</label>
+    <label><input type="checkbox" class="role" value="Ρουφιάνος"> Ρουφιάνος</label>
+    <label><input type="checkbox" class="role" value="Δήμαρχος"> Δήμαρχος</label>
+    <label><input type="checkbox" class="role" value="Τρέλα"> Τρέλα</label>
+    <label><input type="checkbox" class="role" value="Γιατρός"> Γιατρός</label>
+    <label><input type="checkbox" class="role" value="Πυρομανής"> Πυρομανής</label>
+    <label><input type="checkbox" class="role" value="Μητέρα Τερέζα"> Μητέρα Τερέζα</label>
+    <label><input type="checkbox" class="role" value="Ερωτευμένος 1"> Ερωτευμένος 1</label>
+    <label><input type="checkbox" class="role" value="Ερωτευμένος 2"> Ερωτευμένος 2</label>
+
+    <button onclick="assignRoles()">Επόμενο</button>
+</div>
+
+<div class="card hidden" id="step3">
+    <h3>Βήμα 3: Δες τους ρόλους</h3>
+
+    <div id="playerToShow" class="player-name"></div>
+
+    <button onclick="showRole()">Δείξε Ρόλο</button>
+
+    <div id="roleDisplay" class="role-display"></div>
+
+    <button onclick="nextPlayer()" id="nextBtn" class="hidden next-btn">Επόμενος Παίκτης</button>
+</div>
+
+<script>
+    let players = [];
+    let assignedRoles = [];
+    let playerIndex = 0;
+    
+    function createPlayerInputs() {
+        const count = document.getElementById("playerCount").value;
+        const container = document.getElementById("players");
+        container.innerHTML = "";
+    
+        if (count < 1) return;
+    
+        for (let i = 0; i < count; i++) {
+            container.innerHTML += `<input type="text" id="player${i}" placeholder="Παίκτης ${i+1}">`;
+        }
+    
+        document.getElementById("btnToStep2").classList.remove("hidden");
+    }
+    
+    function goToStep2() {
+        players = [];
+        const count = document.getElementById("playerCount").value;
+    
+        for (let i = 0; i < count; i++) {
+            let name = document.getElementById(`player${i}`).value.trim();
+            if (name === "") {
+                alert("Συμπλήρωσε όλα τα ονόματα!");
+                return;
+            }
+            players.push(name);
+        }
+    
+        document.getElementById("step1").classList.add("hidden");
+        document.getElementById("step2").classList.remove("hidden");
+    }
+    
+    function assignRoles() {
+        const selected = document.querySelectorAll(".role:checked");
+        if (selected.length === 0) {
+            alert("Επίλεξε τουλάχιστον 1 ρόλο!");
+            return;
+        }
+    
+        let roles = [];
+        selected.forEach(r => roles.push(r.value));
+    
+        while (roles.length < players.length) {
+            roles.push("Πολίτης");
+        }
+    
+        roles = roles.sort(() => Math.random() - 0.5);
+        assignedRoles = roles;
+    
+        document.getElementById("step2").classList.add("hidden");
+        document.getElementById("step3").classList.remove("hidden");
+    
+        playerIndex = 0;
+        prepareNextPlayer();
+    }
+    
+    function prepareNextPlayer() {
+        const roleDisplay = document.getElementById("roleDisplay");
+        const nextBtn = document.getElementById("nextBtn");
+        const showBtn = document.querySelector("#step3 button:first-of-type");
+        const playerField = document.getElementById("playerToShow");
+    
+        roleDisplay.innerHTML = "";
+        nextBtn.classList.add("hidden");
+    
+        // Αν ΤΕΛΕΙΩΣΑΝ οι παίκτες → εμφάνιση "Ξανά Μοίρασε"
+        if (playerIndex >= players.length) {
+            playerField.innerHTML = "Οι ρόλοι μοιράστηκαν σε όλους!";
+            showBtn.classList.add("hidden");
+            nextBtn.classList.add("hidden");
+    
+            // Δημιουργία νέου κουμπιού "Ξανά Μοίρασε"
+            if (!document.getElementById("restartBtn")) {
+                const btn = document.createElement("button");
+                btn.id = "restartBtn";
+                btn.classList.add("next-btn");
+                btn.innerText = "Ξανά Μοίρασε";
+                btn.onclick = restartGame;
+                document.getElementById("step3").appendChild(btn);
+            }
+            return;
+        }
+    
+        // Κανονική εμφάνιση επόμενου παίκτη
+        playerField.innerHTML = `Παίκτης: <b>${players[playerIndex]}</b>`;
+        showBtn.classList.remove("hidden");
+    
+        // Κρύβουμε το "Ξανά Μοίρασε" αν υπάρχει
+        const restartButton = document.getElementById("restartBtn");
+        if (restartButton) restartButton.remove();
+    }
+    
+    function showRole() {
+        document.getElementById("roleDisplay").innerHTML = assignedRoles[playerIndex];
+        document.getElementById("nextBtn").classList.remove("hidden");
+    }
+    
+    function nextPlayer() {
+        playerIndex++;
+        prepareNextPlayer();
+    }
+    
+    function restartGame() {
+        // Επιστροφή στην αρχή
+        document.getElementById("step3").classList.add("hidden");
+        document.getElementById("step1").classList.remove("hidden");
+    
+        // Καθαρισμός παικτών
+        document.getElementById("players").innerHTML = "";
+        document.getElementById("playerCount").value = "";
+        document.getElementById("btnToStep2").classList.add("hidden");
+    }
+    </script>
+    
+
+</body>
+</html>
