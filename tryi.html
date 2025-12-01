@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<title>Παλέρμο - Ανάθεση Ρόλων</title>
+<style>
+    body { font-family: Arial; max-width: 600px; margin: 20px auto; }
+    .player-input { margin-bottom: 5px; }
+</style>
+</head>
+<body>
+
+<h2>Παιχνίδι Παλέρμο</h2>
+
+<!-- Βήμα 1: Αριθμός παικτών -->
+<label>Αριθμός παικτών:</label>
+<input type="number" id="playerCount" min="1">
+<button onclick="createPlayerInputs()">OK</button>
+
+<div id="players"></div>
+
+<!-- Βήμα 2: Επιλογή ρόλων -->
+<h3>Επίλεξε ρόλους:</h3>
+<label><input type="checkbox" class="role" value="Μαφιόζος"> Μαφιόζος</label><br>
+<label><input type="checkbox" class="role" value="Γιατρός"> Γιατρός</label><br>
+<label><input type="checkbox" class="role" value="Αστυνομικός"> Αστυνομικός</label><br>
+<label><input type="checkbox" class="role" value="Πολίτης"> Πολίτης</label><br><br>
+
+<button onclick="assignRoles()">Μοίρασε Ρόλους</button>
+
+<h3>Αποτελέσματα:</h3>
+<div id="results"></div>
+
+<script>
+function createPlayerInputs() {
+    const count = document.getElementById("playerCount").value;
+    const container = document.getElementById("players");
+    container.innerHTML = "";
+
+    for (let i = 0; i < count; i++) {
+        container.innerHTML += 
+            `<div class="player-input">
+                Παίκτης ${i+1}: <input type="text" id="player${i}">
+             </div>`;
+    }
+}
+
+function assignRoles() {
+    const count = document.getElementById("playerCount").value;
+    let players = [];
+    
+    for (let i = 0; i < count; i++) {
+        const name = document.getElementById(`player${i}`).value.trim();
+        if (name === "") {
+            alert("Συμπλήρωσε όλα τα ονόματα!");
+            return;
+        }
+        players.push(name);
+    }
+
+    // Πάρε τους ρόλους που επιλέχθηκαν
+    const roleCheckboxes = document.querySelectorAll(".role:checked");
+    if (roleCheckboxes.length === 0) {
+        alert("Επίλεξε τουλάχιστον έναν ρόλο!");
+        return;
+    }
+
+    let roles = [];
+    roleCheckboxes.forEach(cb => roles.push(cb.value));
+
+    // Αν οι ρόλοι είναι λιγότεροι από τους παίκτες, συμπλήρωσε με Πολίτες
+    while (roles.length < players.length) {
+        roles.push("Πολίτης");
+    }
+
+    // Ανακάτεμα ρόλων
+    roles = roles.sort(() => Math.random() - 0.5);
+
+    // Ανάθεση
+    let resultsHtml = "";
+    for (let i = 0; i < players.length; i++) {
+        resultsHtml += `<p><b>${players[i]}</b>: ${roles[i]}</p>`;
+    }
+
+    document.getElementById("results").innerHTML = resultsHtml;
+}
+</script>
+
+</body>
+</html>
