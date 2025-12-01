@@ -2,10 +2,19 @@
 <html lang="el">
 <head>
 <meta charset="UTF-8">
-<title>Παλέρμο - Ανάθεση Ρόλων</title>
+<title>Παλέρμο - Μυστική Εμφάνιση Ρόλων</title>
 <style>
-    body { font-family: Arial; max-width: 600px; margin: 20px auto; }
+    body { font-family: Arial; max-width: 650px; margin: 20px auto; }
     .player-input { margin-bottom: 5px; }
+    #secretBox {
+        border: 2px solid black;
+        padding: 20px;
+        margin-top: 20px;
+        display: none;
+        text-align: center;
+        background: #f2f2f2;
+        font-size: 22px;
+    }
 </style>
 </head>
 <body>
@@ -20,18 +29,33 @@
 <div id="players"></div>
 
 <!-- Βήμα 2: Επιλογή ρόλων -->
-<h3>Επίλεξε ρόλους:</h3>
-<label><input type="checkbox" class="role" value="Μαφιόζος"> Μαφιόζος</label><br>
+<h3>Επίλεξε ρόλους (μόνο 1 από κάθε ρόλο):</h3>
+
+<label><input type="checkbox" class="role" value="Φανερός Δολοφόνος"> Φανερός Δολοφόνος</label><br>
+<label><input type="checkbox" class="role" value="Κρυφός Δολοφόνος"> Κρυφός Δολοφόνος</label><br>
+<label><input type="checkbox" class="role" value="Κρυφός Δολοφόνος 2"> Κρυφός Δολοφόνος 2</label><br>
+<label><input type="checkbox" class="role" value="Μπάτσος"> Μπάτσος</label><br>
+<label><input type="checkbox" class="role" value="Ρουφιάνος"> Ρουφιάνος</label><br>
+<label><input type="checkbox" class="role" value="Δήμαρχος"> Δήμαρχος</label><br>
+<label><input type="checkbox" class="role" value="Τρέλα"> Τρέλα</label><br>
 <label><input type="checkbox" class="role" value="Γιατρός"> Γιατρός</label><br>
-<label><input type="checkbox" class="role" value="Αστυνομικός"> Αστυνομικός</label><br>
-<label><input type="checkbox" class="role" value="Πολίτης"> Πολίτης</label><br><br>
+<label><input type="checkbox" class="role" value="Πυρομανής"> Πυρομανής</label><br>
+<label><input type="checkbox" class="role" value="Μητέρα Τερέζα"> Μητέρα Τερέζα</label><br>
+<label><input type="checkbox" class="role" value="Ερωτευμένος 1"> Ερωτευμένος 1</label><br>
+<label><input type="checkbox" class="role" value="Ερωτευμένος 2"> Ερωτευμένος 2</label><br><br>
 
 <button onclick="assignRoles()">Μοίρασε Ρόλους</button>
 
-<h3>Αποτελέσματα:</h3>
-<div id="results"></div>
+<h3>Μυστική Εμφάνιση Ρόλων</h3>
+<button id="nextPlayerBtn" style="display:none;" onclick="showNextPlayer()">Επόμενος Παίκτης</button>
+
+<div id="secretBox"></div>
 
 <script>
+let finalPlayers = [];
+let finalRoles = [];
+let currentIndex = 0;
+
 function createPlayerInputs() {
     const count = document.getElementById("playerCount").value;
     const container = document.getElementById("players");
@@ -47,42 +71,60 @@ function createPlayerInputs() {
 
 function assignRoles() {
     const count = document.getElementById("playerCount").value;
-    let players = [];
-    
+
+    // Συλλογή ονομάτων
+    finalPlayers = [];
     for (let i = 0; i < count; i++) {
         const name = document.getElementById(`player${i}`).value.trim();
         if (name === "") {
             alert("Συμπλήρωσε όλα τα ονόματα!");
             return;
         }
-        players.push(name);
+        finalPlayers.push(name);
     }
 
-    // Πάρε τους ρόλους που επιλέχθηκαν
-    const roleCheckboxes = document.querySelectorAll(".role:checked");
-    if (roleCheckboxes.length === 0) {
+    // Επιλογή ρόλων
+    let selectedRoles = [];
+    document.querySelectorAll(".role:checked").forEach(cb => {
+        selectedRoles.push(cb.value);
+    });
+
+    if (selectedRoles.length === 0) {
         alert("Επίλεξε τουλάχιστον έναν ρόλο!");
         return;
     }
 
-    let roles = [];
-    roleCheckboxes.forEach(cb => roles.push(cb.value));
-
-    // Αν οι ρόλοι είναι λιγότεροι από τους παίκτες, συμπλήρωσε με Πολίτες
-    while (roles.length < players.length) {
-        roles.push("Πολίτης");
+    // Αν οι παίκτες είναι περισσότεροι, συμπλήρωσε με Πολίτες
+    while (selectedRoles.length < finalPlayers.length) {
+        selectedRoles.push("Πολίτης");
     }
 
-    // Ανακάτεμα ρόλων
-    roles = roles.sort(() => Math.random() - 0.5);
+    // Shuffle ρόλων
+    finalRoles = selectedRoles.sort(() => Math.random() - 0.5);
 
-    // Ανάθεση
-    let resultsHtml = "";
-    for (let i = 0; i < players.length; i++) {
-        resultsHtml += `<p><b>${players[i]}</b>: ${roles[i]}</p>`;
+    // Έναρξη μυστικής εμφάνισης
+    currentIndex = 0;
+    document.getElementById("nextPlayerBtn").style.display = "block";
+    document.getElementById("secretBox").style.display = "none";
+
+    alert("Οι ρόλοι έχουν μοιραστεί! Πάτησε 'Επόμενος Παίκτης'.");
+}
+
+function showNextPlayer() {
+    if (currentIndex >= finalPlayers.length) {
+        alert("Τελείωσαν όλοι οι παίκτες!");
+        return;
     }
 
-    document.getElementById("results").innerHTML = resultsHtml;
+    const box = document.getElementById("secretBox");
+    box.style.display = "block";
+    box.innerHTML = `<b>${finalPlayers[currentIndex]}</b><br>Ο ρόλος σου είναι:<br><h2>${finalRoles[currentIndex]}</h2>
+                     <button onclick="hideRole()">Κλείσε</button>`;
+}
+
+function hideRole() {
+    document.getElementById("secretBox").style.display = "none";
+    currentIndex++;
 }
 </script>
 
